@@ -1,17 +1,36 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <ButtonReel v-if="idx >= 0" :disabled="idx !== 1" :speed="100"
+                :choices="['Start', 'Stop', 'Try more', 'Do less', 'Cut back', 'Improve']"
+                @clicked="idx++"
+    />
+    <ButtonReel v-if="idx > 1" :disabled="idx !== 2" :speed="100"
+                :choices="['Farting', 'Running', 'Playa hating', 'Crushing it']"
+                @clicked="idx++"
+    />
+
+    <button type="reset" @click.prevent="restart">Restart</button>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import ButtonReel from './components/ButtonReel';
 
 export default {
   name: 'app',
   components: {
-    HelloWorld
+    ButtonReel
+  },
+  data: () => {
+    return {
+      idx: 1
+    }
+  },
+  methods: {
+    restart() {
+      this.idx = -1;
+      setTimeout(() => this.idx = 1, 100);
+    }
   }
 }
 </script>
@@ -25,4 +44,9 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
 }
+
+  button {
+    display: block;
+    margin: 1rem auto;
+  }
 </style>
