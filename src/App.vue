@@ -1,52 +1,68 @@
 <template>
-  <div id="app">
-    <ButtonReel v-if="idx >= 0" :disabled="idx !== 1" :speed="100"
-                :choices="['Start', 'Stop', 'Try more', 'Do less', 'Cut back', 'Improve']"
-                @clicked="idx++"
-    />
-    <ButtonReel v-if="idx > 1" :disabled="idx !== 2" :speed="100"
-                :choices="['Farting', 'Running', 'Playa hating', 'Crushing it']"
-                @clicked="idx++"
-    />
+	<div id="app">
+		<div v-for="(choiceSet, itr) in choices">
+			<ButtonReel v-if="idx > itr" class="btn"
+						:key="itr"
+						:speed="Math.max(10, rate * (choices.length - itr))"
+						:choices="shuffle(choiceSet)"
+						@clicked="idx++"
+			/>
+		</div>
 
-    <button type="reset" @click.prevent="restart">Restart</button>
-  </div>
+		<button type="reset" @click.prevent="restart">Restart</button>
+	</div>
 </template>
 
 <script>
-import ButtonReel from './components/ButtonReel';
+	import ButtonReel from './components/ButtonReel';
 
-export default {
-  name: 'app',
-  components: {
-    ButtonReel
-  },
-  data: () => {
-    return {
-      idx: 1
-    }
-  },
-  methods: {
-    restart() {
-      this.idx = -1;
-      setTimeout(() => this.idx = 1, 100);
-    }
-  }
-}
+	export default {
+		name: 'App',
+		components: {
+			ButtonReel
+		},
+		props: {
+			choices: {
+				type: Array,
+				required: true
+			}
+		},
+		data: () => {
+			return {
+				idx: 1,
+				rate: 10
+			};
+		},
+		methods: {
+			restart() {
+				this.idx = -1;
+				setTimeout(() => this.idx = 1, 100);
+			},
+			shuffle(arr) {
+				for (let itr = arr.length - 1; itr > 0; itr--) {
+					const idx = Math.floor(Math.random() * (
+						itr + 1
+					));
+					[arr[itr], arr[idx]] = [arr[idx], arr[itr]];
+				}
+
+				return arr;
+			}
+		}
+	};
 </script>
 
 <style lang="scss">
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+	@import './assets/css/index';
 
-  button {
-    display: block;
-    margin: 1rem auto;
-  }
+	#app {
+		align-items: center;
+		display: flex;
+		flex-flow: column nowrap;
+	}
+
+	button {
+		display: block;
+		margin: 1rem auto;
+	}
 </style>
