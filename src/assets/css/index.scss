@@ -1,14 +1,53 @@
-@import '~normalize.css/normalize.css';
-@import url('https://fonts.googleapis.com/css?family=Raleway');
+@import url('https://use.typekit.net/lyx8rsz.css');
 
 :root {
-	--font-family-sans-serif: 'Raleway', Arial, Helvetica, sans-serif;
+	--size-base: 1.5rem;
+	//--color-primary: #4036ff;
+	--color-primary: #ff4136;
+	--color-background-secondary: #faf9f8;
+	--color-background-header: #111;
+	--color-background-btn: #111;
+	--font-family-serif: abril-text, Georgia, serif;
+	--font-family-sans-serif: niveau-grotesk, -apple-system, BlinkMacSystemFont, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+	--font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+	--font-family-title: var(--font-family-sans-serif);
 }
 
 .btn {
-	font: bold 2rem var(--font-family-sans-serif);
+	background-color: var(--color-background-btn, black);
+	border: 1px solid transparent;
+	border-radius: 4px;
+	box-sizing: border-box;
+	color: var(--color-btn, white);
+	display: block;
+	font-size: var(--font-size-btn, xx-large);
+	font-weight: bold;
+	margin: 0 auto;
+	padding: .5em 1em;
+	text-align: center;
+	user-select: none;
+	vertical-align: middle;
+	will-change: contents;
+
+	&[disabled],
+	&.disabled {
+		background-color: transparent;
+		color: var(--color-background-btn, black);
+		font-style: italic;
+	}
+
+	&:first-of-type {
+		--color-background-btn: #ff4136;
+	}
+
+	&:nth-of-type(2) {
+		--color-background-btn: #4036ff;
+	}
 }
 
 body {
-	font: normal 18px/1.5 var(--font-family-sans-serif);
+	background-color: white;
+	font-family: var(--font-family-sans-serif);
+	margin: 0;
+	padding: 0;
 }

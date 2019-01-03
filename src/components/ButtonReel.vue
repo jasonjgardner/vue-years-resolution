@@ -1,5 +1,11 @@
 <template>
-	<button :disabled="!!disabled" @click="clicked" type="button">{{ text || title }}</button>
+	<button :disabled="!!isDisabled"
+			:type="type"
+			:aria-label="description"
+			class="btn"
+			@click="clicked">
+		<span>{{ text || label }}</span>
+	</button>
 </template>
 
 <script>
@@ -9,10 +15,8 @@
 			choices: {
 				type: Array,
 				required: true,
-				validator: val =>
-					Array.isArray(val) &&
-					val.length === val.filter(v => typeof v === 'string').length,
-				default: () => []
+				default: () => [],
+				validator: val => Array.isArray(val) && val.length === val.filter(v => typeof v === 'string').length,
 			},
 			disabled: {
 				type: Boolean,
@@ -20,56 +24,81 @@
 			},
 			speed: {
 				type: Number,
-				validator: val => val > 1,
-				default: 200
+				default: 200,
+				validator: val => val > 1
 			},
-			title: {
+			label: {
 				type: String,
 				default: 'Loading...'
+			},
+			type: {
+				type: String,
+				default: 'button',
+				validator: val => ['button', 'submit', 'reset'].includes(val)
+			},
+			description: {
+				type: String,
+				default: 'Press to stop',
+				required: false
+			},
+			randomize: {
+				type: Boolean,
+				default: true,
+				required: false
 			}
 		},
-		data: () => {
+		data() {
 			return {
+				isDisabled: this.disabled || false,
 				clicks: 0,
 				text: undefined,
 				interval: undefined
+			};
+		},
+		destroyed() {
+			this.stop();
+		},
+		mounted() {
+			this.text = this.label || this.random();
+
+			if (this.isDisabled) {
+				return;
 			}
+
+			let idx = 0,
+				fn = (() => this.text = this.random());
+
+			if (!this.randomize) {
+				fn = (() => {
+					if (idx >= length) {
+						idx = 0;
+					}
+
+					this.text = this.choices[idx];
+
+					idx++;
+				});
+			}
+
+			const length = this.choices.length;
+
+			this.interval = setInterval(fn, this.speed || 100);
 		},
 		methods: {
 			clicked() {
-				this.clicks++;
-				this.$emit('clicked') ;
+				if (this.interval) {
+					this.$emit('stopped', `${this.text}`);
+				}
+
 				this.stop();
 			},
 			random() {
 				return this.choices[Math.floor(Math.random() * this.choices.length)];
 			},
 			stop() {
+				this.isDisabled = true;
 				clearInterval(this.interval);
 			}
-		},
-		mounted() {
-			this.text = this.title || this.random();
-
-			if (this.disabled) {
-				return;
-			}
-
-			this.interval = setInterval(() => {
-				this.text = this.random()
-			}, this.speed || 100);
-		},
-		destroyed() {
-			this.stop();
 		}
 	};
 </script>
-
-<style lang="scss" scoped>
-	$btn-width: 33vw;
-
-	button {
-		font-size: 3rem;
-		width: $btn-width;
-	}
-</style>
